@@ -1,0 +1,12 @@
+# Generated benchmark data (2.3 GB) — regenerate locally with ingest_coco.py
+bench_data/
+
+# Python bytecode / caches
+__pycache__/
+*.pyc
+
+# Downloaded COCO archives
+*.zip
+
+# OS noise
+.DS_Store
