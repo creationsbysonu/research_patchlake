@@ -494,24 +494,30 @@ Correctness / design debt a reviewer should know about:
 
 ---
 
-## Artifacts and what to commit
+## Artifacts and what is committed
 
-`.plake` files are *build outputs* — they are fully reproducible from `ingest.py`,
-`benchmark.py` and `ingest_coco.py`. The working tree is ~2.4 GB:
+`.plake` files are *build outputs* — fully reproducible from `ingest.py`, `benchmark.py` and
+`ingest_coco.py`. The repository is therefore source-only: **10 files, ~1.5 MB**, so cloning is
+instant.
 
-| Path | Size | Commit? |
+```bash
+git clone https://github.com/creationsbysonu/research_patchlake.git
+cd research_patchlake
+```
+
+| Path | Size | In the repo? |
 |---|---|---|
-| `*.py`, `README.md` | ~30 KB | **yes** |
-| `test_batch.plake` | 1.5 MB | optional (nice for a first-run demo, and `reader.py` expects it) |
-| `bench_data/jpegs/`, `bench_data/dataset.plake` | 5.1 MB + 14.7 MB | no — regenerate with `benchmark.py` |
-| `bench_data/coco/` (zip + 5,000 JPEGs + `.plake`) | 2.3 GB | no — regenerate with `ingest_coco.py` |
+| `*.py`, `README.md`, `.gitignore` | ~28 KB | **yes** |
+| `test_batch.plake` | 1.5 MB | **yes** — 10 synthetic images, so `python reader.py` works with no setup |
+| `bench_data/coco/coco_val2017.plake` | 733 MB | no — rebuild with `ingest_coco.py` |
+| `bench_data/coco/val2017.zip` + 5,000 JPEGs | 778 MB + 787 MB | no — downloaded on demand by `ingest_coco.py` |
+| `bench_data/dataset.plake`, `bench_data/jpegs/` | 14.7 MB + 5.1 MB | no — rebuild with `benchmark.py` |
 | `__pycache__/` | — | no |
 
-GitHub rejects any single file over 100 MB, so `coco_val2017.plake` (733 MB) and `val2017.zip`
-(778 MB) cannot be pushed. A `.gitignore` covering `bench_data/`, `__pycache__/` and `*.plake`
-(plus `git rm --cached -r bench_data __pycache__` to unstage what is already staged) is required
-before the first push. `test_batch.plake` is the one artifact worth keeping so a reviewer can run
-`python reader.py` immediately after cloning.
+GitHub enforces a hard 100 MB per-file limit and a 2 GB push payload limit; `coco_val2017.plake`
+(733 MB) and `val2017.zip` (778 MB) exceed both, so `.gitignore` excludes `bench_data/`,
+`__pycache__/`, `*.pyc` and `*.zip`. Every figure in this README was produced by actually running
+the scripts above, so a reviewer can regenerate the datasets and reproduce the tables end to end.
 
 ---
 
